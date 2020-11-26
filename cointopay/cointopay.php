@@ -154,49 +154,49 @@ class Cointopay extends PaymentModule
         if ($order_ctp_pending->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_pending->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_pending->id . '.gif'
             );
         }
 		
 		if ($order_ctp_waiting->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_waiting->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_waiting->id . '.gif'
             );
         }
 		
 		if ($order_processing->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_processing->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_processing->id . '.gif'
             );
         }
 
         if ($order_failed->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_failed->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_failed->id . '.gif'
             );
         }
 
         if ($order_expired->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_expired->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_expired->id . '.gif'
             );
         }
 
         if ($order_invalid->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_invalid->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_invalid->id . '.gif'
             );
         }
 
         if ($order_not_enough->add()) {
             copy(
                 _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_not_enough->id . '.png'
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_not_enough->id . '.gif'
             );
         }
 

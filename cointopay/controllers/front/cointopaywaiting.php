@@ -51,12 +51,15 @@ class CointopayCointopaywaitingModuleFrontController extends ModuleFrontControll
 				$decoded = json_decode($output);
 				$status_res = json_decode($output, true);
 				if($status_res[1] == 'waiting'){
-					$history = new OrderHistory();
-					$history->id_order = $orderID;
-					$history->changeIdOrderState((int)Configuration::get('COINTOPAY_WAITING'), $orderID);
-					$history->addWithemail(true, array(
-						'order_name' => $orderID,
-					));
+					$order = new Order($orderID);
+					if($order->getCurrentOrderState()->name[1] == 'Waiting for cointopay transaction'){
+						$history = new OrderHistory();
+						$history->id_order = $orderID;
+						$history->changeIdOrderState((int)Configuration::get('COINTOPAY_WAITING'), $orderID);
+						$history->addWithemail(true, array(
+							'order_name' => $orderID,
+						));
+					}
 				}
 				print_r($output);die;
 			}
