@@ -56,9 +56,6 @@ class CointopayValidationModuleFrontController extends ModuleFrontController
             die($this->module->l('This payment method is not available.', 'validation'));
         }
 
-        //$this->setTemplate('payment_return.tpl');
-        //$this->setTemplate('module:paymentexample/views/templates/front/payment_return.tpl');
-
 
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer))
