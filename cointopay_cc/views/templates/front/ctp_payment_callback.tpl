@@ -23,22 +23,17 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<section>
-  <p>
-    {l s='Cryptocurrency payments are processed by Cointopay.com - over 200 tokens supported.' d='cointopay' mod='cointopay'}
-  </p>
-  <div class="modal fade" id="cointopay-modal" tabindex="-1" role="dialog" aria-labelledby="Cointopay information" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h2>Bitcoin, Ethereum, Litecoin or many other (via <a href="https://cointopay.com" target="_blank">Cointopay</a>)</h2>
-        </div>
-        <div class="modal-body">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+{extends "$layout"}
+<style>
+#wrapper {
+    background: #fff;
+    box-shadow: inset 0 2px 5px 0 rgba(0,0,0,.11);
+    padding-top: 1.563rem;
+}
+</style>
+{block name="content"}
+  <section  style="padding:40px 0 60px 0;">
+  <h3>Cointopay Fiat Payment Status:</h3>
+    {$text|escape:'htmlall':'UTF-8'}
+  </section>
+{/block}

@@ -31,7 +31,7 @@
 require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
 require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
 
-class CointopayValidationModuleFrontController extends ModuleFrontController
+class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
 {
     /**
      * @see FrontController::postProcess()
@@ -46,7 +46,7 @@ class CointopayValidationModuleFrontController extends ModuleFrontController
         // Check that this payment option is still available in case the customer changed his address just before the end of the checkout process
         $authorized = false;
         foreach (Module::getPaymentModules() as $module) {
-            if ($module['name'] == 'cointopay') {
+            if ($module['name'] == 'cointopay_cc') {
                 $authorized = true;
                 break;
             }
@@ -64,7 +64,7 @@ class CointopayValidationModuleFrontController extends ModuleFrontController
         $currency = $this->context->currency;
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
     
-        $this->module->validateOrder($cart->id, Configuration::get('COINTOPAY_PENDING'), $total, $this->module->displayName, NULL, array(), (int)$currency->id, false, $customer->secure_key);
+        $this->module->validateOrder($cart->id, Configuration::get('COINTOPAY_CC_PENDING'), $total, $this->module->displayName, NULL, array(), (int)$currency->id, false, $customer->secure_key);
 		$link = new Link();
         $success_url = '';
 		$success_url = $link->getPageLink('order-confirmation', null, null, array(
@@ -76,15 +76,15 @@ class CointopayValidationModuleFrontController extends ModuleFrontController
         foreach ($cart->getProducts() as $product) {
             $description[] = $product['cart_quantity'] . ' × ' . $product['name'];
         }
-		$merchant_id = Configuration::get('COINTOPAY_MERCHANT_ID');
-        $security_code = Configuration::get('COINTOPAY_SECURITY_CODE');
-        $user_currency = Configuration::get('COINTOPAY_CRYPTO_CURRENCY');
+		$merchant_id = Configuration::get('COINTOPAY_CC_MERCHANT_ID');
+        $security_code = Configuration::get('COINTOPAY_CC_SECURITY_CODE');
+        $user_currency = Configuration::get('COINTOPAY_CC_CRYPTO_CURRENCY');
         $selected_currency = (isset($user_currency) && !empty($user_currency)) ? $user_currency : 1;
         $ctpConfig = array(
           'merchant_id' => $merchant_id,
           'security_code'=>$security_code,
           'selected_currency'=>$selected_currency,
-          'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_PRESTASHOP_EXTENSION_VERSION
+          'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
         );
 
         \Cointopay\Cointopay::config($ctpConfig);
@@ -101,7 +101,7 @@ class CointopayValidationModuleFrontController extends ModuleFrontController
         ));
          
         if (isset($order)) {
-        Tools::redirect('index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key.'&QRCodeURL='.$this->flashEncode($order->QRCodeURL).'&TransactionID='.$order->TransactionID.'&CoinName='.$order->CoinName.'&RedirectURL='.$order->shortURL.'&merchant_id='.$merchant_id.'&ExpiryTime='.$order->ExpiryTime.'&Amount='.$order->Amount.'&CustomerReferenceNr='.$order->CustomerReferenceNr.'&coinAddress='.$order->coinAddress.'&ConfirmCode='.$order->Security.'&AltCoinID='.$order->AltCoinID.'&SecurityCode='.$order->SecurityCode.'&inputCurrency='.$order->inputCurrency);
+        Tools::redirect('index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key.'&PaymentDetail='.$this->flashEncode($order->PaymentDetail).'&TransactionID='.$order->TransactionID.'&CoinName='.$order->CoinName.'&RedirectURL='.$order->shortURL.'&merchant_id='.$merchant_id.'&ExpiryTime='.$order->ExpiryTime.'&Amount='.$order->Amount.'&CustomerReferenceNr='.$order->CustomerReferenceNr.'&coinAddress='.$order->coinAddress.'&ConfirmCode='.$order->Security.'&AltCoinID='.$order->AltCoinID.'&SecurityCode='.$order->SecurityCode.'&inputCurrency='.$order->inputCurrency);
 		}
 		else {
             Tools::redirect('index.php?controller=order&step=3');

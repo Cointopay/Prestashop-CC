@@ -27,7 +27,7 @@
 require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
 require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
 
-class CointopayCointopaywaitingModuleFrontController extends ModuleFrontController
+class Cointopay_CcCointopaywaitingModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
@@ -55,7 +55,7 @@ class CointopayCointopaywaitingModuleFrontController extends ModuleFrontControll
 					if($order->getCurrentOrderState()->name[1] == 'Waiting for cointopay transaction'){
 						$history = new OrderHistory();
 						$history->id_order = $orderID;
-						$history->changeIdOrderState((int)Configuration::get('COINTOPAY_WAITING'), $orderID);
+						$history->changeIdOrderState((int)Configuration::get('COINTOPAY_CC_WAITING'), $orderID);
 						$history->addWithemail(true, array(
 							'order_name' => $orderID,
 						));
@@ -68,7 +68,7 @@ class CointopayCointopaywaitingModuleFrontController extends ModuleFrontControll
                 'text' => get_class($e) . ': ' . $e->getMessage()
             ));
 			if (_PS_VERSION_ >= '1.7') {
-				$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_cancel.tpl');
+				$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
 			} else {
 				$this->setTemplate('ctp_payment_cancel.tpl');
 			}

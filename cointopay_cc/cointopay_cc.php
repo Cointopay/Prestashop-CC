@@ -32,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 require_once _PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php';
 require_once _PS_MODULE_DIR_ . '/cointopay/vendor/version.php';
 
-class Cointopay extends PaymentModule
+class Cointopay_Cc extends PaymentModule
 {
     public $merchant_id;
     public $security_code;
@@ -42,7 +42,7 @@ class Cointopay extends PaymentModule
 
     public function __construct()
     {
-        $this->name = 'cointopay';
+        $this->name = 'cointopay_cc';
         $this->tab = 'payments_gateways';
         $this->version = '1.0.0';
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
@@ -56,26 +56,26 @@ class Cointopay extends PaymentModule
 
         $config = Configuration::getMultiple(
             array(
-                'COINTOPAY_MERCHANT_ID',
-                'COINTOPAY_SECURITY_CODE',
-                'COINTOPAY_CRYPTO_CURRENCY',
-                'COINTOPAY_DISPLAY_NAME'
+                'COINTOPAY_CC_MERCHANT_ID',
+                'COINTOPAY_CC_SECURITY_CODE',
+                'COINTOPAY_CC_CRYPTO_CURRENCY',
+                'COINTOPAY_CC_DISPLAY_NAME'
             )
         );
 
-        if (!empty($config['COINTOPAY_MERCHANT_ID'])) {
-            $this->merhcant_id = $config['COINTOPAY_MERCHANT_ID'];
+        if (!empty($config['COINTOPAY_CC_MERCHANT_ID'])) {
+            $this->merhcant_id = $config['COINTOPAY_CC_MERCHANT_ID'];
         }
-        if (!empty($config['COINTOPAY_SECURITY_CODE'])) {
-            $this->security_code = $config['COINTOPAY_SECURITY_CODE'];
+        if (!empty($config['COINTOPAY_CC_SECURITY_CODE'])) {
+            $this->security_code = $config['COINTOPAY_CC_SECURITY_CODE'];
         }
-        if (!empty($config['COINTOPAY_CRYPTO_CURRENCY'])) {
-            $this->crypto_currency = $config['COINTOPAY_CRYPTO_CURRENCY'];
+        if (!empty($config['COINTOPAY_CC_CRYPTO_CURRENCY'])) {
+            $this->crypto_currency = $config['COINTOPAY_CC_CRYPTO_CURRENCY'];
         }
 
         parent::__construct();
 
-        $this->displayName = 'Cointopay International';
+        $this->displayName = 'Cointopay Fiat Payment';
         $this->description = $this->l('Accept Bitcoin and other cryptocurrencies as a payment method with Cointopay');
         $this->confirmUninstall = $this->l('Are you sure you want to delete your details?');
 
@@ -96,23 +96,23 @@ class Cointopay extends PaymentModule
         }
 
         $order_ctp_pending = new OrderState();
-        $order_ctp_pending->name = array_fill(0, 10, 'Waiting for cointopay transaction');
+        $order_ctp_pending->name = array_fill(0, 10, 'instant bank transfer');
         $order_ctp_pending->send_email = 0;
         $order_ctp_pending->invoice = 0;
         $order_ctp_pending->color = 'RoyalBlue';
         $order_ctp_pending->unremovable = false;
         $order_ctp_pending->logable = 0;
 		
-		$order_ctp_waiting = new OrderState();
-        $order_ctp_waiting->name = array_fill(0, 10, 'Waiting for cointopay comfirmation');
-        $order_ctp_waiting->send_email = 0;
-        $order_ctp_waiting->invoice = 0;
-        $order_ctp_waiting->color = 'RoyalBlue';
-        $order_ctp_waiting->unremovable = false;
-        $order_ctp_waiting->logable = 0;
+		$order_ctp_paid = new OrderState();
+        $order_ctp_paid->name = array_fill(0, 10, 'instant payment accepted');
+        $order_ctp_paid->send_email = 0;
+        $order_ctp_paid->invoice = 0;
+        $order_ctp_paid->color = 'RoyalBlue';
+        $order_ctp_paid->unremovable = false;
+        $order_ctp_paid->logable = 0;
 		
 		$order_processing = new OrderState();
-        $order_processing->name = array_fill(0, 10, 'Cointopay processing in progress');
+        $order_processing->name = array_fill(0, 10, 'Cointopay Fiat payment processing in progress');
         $order_processing->send_email = 0;
         $order_processing->invoice = 0;
         $order_processing->color = 'RoyalBlue';
@@ -120,7 +120,7 @@ class Cointopay extends PaymentModule
         $order_processing->logable = 0;
 
         $order_failed = new OrderState();
-        $order_failed->name = array_fill(0, 10, 'Cointopay payment failed');
+        $order_failed->name = array_fill(0, 10, 'Cointopay Fiat payment payment failed');
         $order_failed->send_email = 0;
         $order_failed->invoice = 0;
         $order_failed->color = '#FF8C00';
@@ -128,7 +128,7 @@ class Cointopay extends PaymentModule
         $order_failed->logable = 0;
 
         $order_expired = new OrderState();
-        $order_expired->name = array_fill(0, 10, 'Cointopay payment expired');
+        $order_expired->name = array_fill(0, 10, 'Cointopay Fiat payment payment expired');
         $order_expired->send_email = 0;
         $order_expired->invoice = 0;
         $order_expired->color = '#DC143C';
@@ -136,7 +136,7 @@ class Cointopay extends PaymentModule
         $order_expired->logable = 0;
 
         $order_invalid = new OrderState();
-        $order_invalid->name = array_fill(0, 10, 'Cointopay invoice is invalid');
+        $order_invalid->name = array_fill(0, 10, 'Cointopay Fiat payment invoice is invalid');
         $order_invalid->send_email = 0;
         $order_invalid->invoice = 0;
         $order_invalid->color = '#8f0621';
@@ -144,7 +144,7 @@ class Cointopay extends PaymentModule
         $order_invalid->logable = 0;
 
         $order_not_enough = new OrderState();
-        $order_not_enough->name = array_fill(0, 10, 'Cointopay not enough payment');
+        $order_not_enough->name = array_fill(0, 10, 'Cointopay Fiat payment not enough');
         $order_not_enough->send_email = 0;
         $order_not_enough->invoice = 0;
         $order_not_enough->color = '#32CD32';
@@ -153,61 +153,61 @@ class Cointopay extends PaymentModule
 
         if ($order_ctp_pending->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
                 _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_pending->id . '.gif'
             );
         }
 		
-		if ($order_ctp_waiting->add()) {
+		if ($order_ctp_paid->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
-                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_waiting->id . '.gif'
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/img/os/' . (int)$order_ctp_paid->id . '.gif'
             );
         }
 		
 		if ($order_processing->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
                 _PS_ROOT_DIR_ . '/img/os/' . (int)$order_processing->id . '.gif'
             );
         }
 
         if ($order_failed->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
                 _PS_ROOT_DIR_ . '/img/os/' . (int)$order_failed->id . '.gif'
             );
         }
 
         if ($order_expired->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
                 _PS_ROOT_DIR_ . '/img/os/' . (int)$order_expired->id . '.gif'
             );
         }
 
         if ($order_invalid->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
                 _PS_ROOT_DIR_ . '/img/os/' . (int)$order_invalid->id . '.gif'
             );
         }
 
         if ($order_not_enough->add()) {
             copy(
-                _PS_ROOT_DIR_ . '/modules/cointopay/views/img/logo.png',
+                _PS_ROOT_DIR_ . '/modules/cointopay_cc/views/img/logo.png',
                 _PS_ROOT_DIR_ . '/img/os/' . (int)$order_not_enough->id . '.gif'
             );
         }
 
 
-        Configuration::updateValue('COINTOPAY_PROCESSING_IN_PROGRESS', $order_processing->id);
-        Configuration::updateValue('COINTOPAY_PNOTENOUGH', $order_not_enough->id);
-        Configuration::updateValue('COINTOPAY_FAILED', $order_failed->id);
-        Configuration::updateValue('COINTOPAY_EXPIRED', $order_expired->id);
-        Configuration::updateValue('COINTOPAY_INVALID', $order_invalid->id);
-		Configuration::updateValue('COINTOPAY_PENDING', $order_ctp_pending->id);
-		Configuration::updateValue('COINTOPAY_WAITING', $order_ctp_waiting->id);
+        Configuration::updateValue('COINTOPAY_CC_PROCESSING_IN_PROGRESS', $order_processing->id);
+        Configuration::updateValue('COINTOPAY_CC_PNOTENOUGH', $order_not_enough->id);
+        Configuration::updateValue('COINTOPAY_CC_FAILED', $order_failed->id);
+        Configuration::updateValue('COINTOPAY_CC_EXPIRED', $order_expired->id);
+        Configuration::updateValue('COINTOPAY_CC_INVALID', $order_invalid->id);
+		Configuration::updateValue('COINTOPAY_CC_PENDING', $order_ctp_pending->id);
+		Configuration::updateValue('COINTOPAY_CC_PAID', $order_ctp_paid->id);
 		
 
         if (!parent::install()
@@ -225,26 +225,26 @@ class Cointopay extends PaymentModule
 
     public function uninstall()
     {
-        $order_state_processing = new OrderState(Configuration::get('COINTOPAY_PROCESSING_IN_PROGRESS'));
-        $order_not_enough = new OrderState(Configuration::get('COINTOPAY_PNOTENOUGH'));
-        $order_state_failed = new OrderState(Configuration::get('COINTOPAY_FAILED'));
-        $order_state_expired = new OrderState(Configuration::get('COINTOPAY_EXPIRED'));
-        $order_state_invalid = new OrderState(Configuration::get('COINTOPAY_INVALID'));
-		$order_state_pending = new OrderState(Configuration::get('COINTOPAY_PENDING'));
-		$order_state_waiting = new OrderState(Configuration::get('COINTOPAY_WAITING'));
+        $order_state_processing = new OrderState(Configuration::get('COINTOPAY_CC_PROCESSING_IN_PROGRESS'));
+        $order_not_enough = new OrderState(Configuration::get('COINTOPAY_CC_PNOTENOUGH'));
+        $order_state_failed = new OrderState(Configuration::get('COINTOPAY_CC_FAILED'));
+        $order_state_expired = new OrderState(Configuration::get('COINTOPAY_CC_EXPIRED'));
+        $order_state_invalid = new OrderState(Configuration::get('COINTOPAY_CC_INVALID'));
+		$order_state_pending = new OrderState(Configuration::get('COINTOPAY_CC_PENDING'));
+		$order_state_paid = new OrderState(Configuration::get('COINTOPAY_CC_PAID'));
 
         return (
-            Configuration::deleteByName('COINTOPAY_MERCHANT_ID') &&
-            Configuration::deleteByName('COINTOPAY_SECURITY_CODE') &&
-            Configuration::deleteByName('COINTOPAY_DISPLAY_NAME') &&
-            Configuration::deleteByName('COINTOPAY_CRYPTO_CURRENCY') &&
+            Configuration::deleteByName('COINTOPAY_CC_MERCHANT_ID') &&
+            Configuration::deleteByName('COINTOPAY_CC_SECURITY_CODE') &&
+            Configuration::deleteByName('COINTOPAY_CC_DISPLAY_NAME') &&
+            Configuration::deleteByName('COINTOPAY_CC_CRYPTO_CURRENCY') &&
             $order_state_processing->delete() &&
             $order_not_enough->delete() &&
             $order_state_failed->delete() &&
             $order_state_expired->delete() &&
             $order_state_invalid->delete() &&
 			$order_state_pending->delete() &&
-			$order_state_waiting->delete() &&
+			$order_state_paid->delete() &&
             parent::uninstall()
         );
     }
@@ -273,25 +273,25 @@ class Cointopay extends PaymentModule
     private function postValidation()
     {
         if (Tools::isSubmit('btnSubmit')) {
-            if (!Tools::getValue('COINTOPAY_MERCHANT_ID')) {
+            if (!Tools::getValue('COINTOPAY_CC_MERCHANT_ID')) {
                 $this->postErrors[] = $this->l('Merchant id is required.');
             }
 
-            if (!Tools::getValue('COINTOPAY_SECURITY_CODE')) {
+            if (!Tools::getValue('COINTOPAY_CC_SECURITY_CODE')) {
                 $this->postErrors[] = $this->l('Security Code is required.');
             }
 
-            if (!Tools::getValue('COINTOPAY_CRYPTO_CURRENCY')) {
+            if (!Tools::getValue('COINTOPAY_CC_CRYPTO_CURRENCY')) {
                 $this->postErrors[] = $this->l('Crypto Currency is required.');
             }
 
             if (empty($this->postErrors)) {
                 $ctpConfig = array(
-                    'merchant_id' => Tools::getValue('COINTOPAY_MERCHANT_ID'),
-                    'security_code' => Tools::getValue('COINTOPAY_SECURITY_CODE'),
-                    'selected_currency' => Tools::getValue('COINTOPAY_CRYPTO_CURRENCY'),
+                    'merchant_id' => Tools::getValue('COINTOPAY_CC_MERCHANT_ID'),
+                    'security_code' => Tools::getValue('COINTOPAY_CC_SECURITY_CODE'),
+                    'selected_currency' => Tools::getValue('COINTOPAY_CC_CRYPTO_CURRENCY'),
                     'user_agent' => 'Cointopay - Prestashop v' . _PS_VERSION_
-                        . ' Extension v' . COINTOPAY_PRESTASHOP_EXTENSION_VERSION,
+                        . ' Extension v' . COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION,
                 );
 
                 \Cointopay\Cointopay::config($ctpConfig);
@@ -308,10 +308,10 @@ class Cointopay extends PaymentModule
     private function postProcess()
     {
         if (Tools::isSubmit('btnSubmit')) {
-            Configuration::updateValue('COINTOPAY_DISPLAY_NAME', Tools::getValue('COINTOPAY_DISPLAY_NAME'));
-            Configuration::updateValue('COINTOPAY_MERCHANT_ID', Tools::getValue('COINTOPAY_MERCHANT_ID'));
-            Configuration::updateValue('COINTOPAY_SECURITY_CODE', Tools::getValue('COINTOPAY_SECURITY_CODE'));
-            Configuration::updateValue('COINTOPAY_CRYPTO_CURRENCY', Tools::getValue('COINTOPAY_CRYPTO_CURRENCY'));
+            Configuration::updateValue('COINTOPAY_CC_DISPLAY_NAME', Tools::getValue('COINTOPAY_CC_DISPLAY_NAME'));
+            Configuration::updateValue('COINTOPAY_CC_MERCHANT_ID', Tools::getValue('COINTOPAY_CC_MERCHANT_ID'));
+            Configuration::updateValue('COINTOPAY_CC_SECURITY_CODE', Tools::getValue('COINTOPAY_CC_SECURITY_CODE'));
+            Configuration::updateValue('COINTOPAY_CC_CRYPTO_CURRENCY', Tools::getValue('COINTOPAY_CC_CRYPTO_CURRENCY'));
         }
 
         $this->html .= $this->displayConfirmation($this->l('Settings updated'));
@@ -335,29 +335,29 @@ class Cointopay extends PaymentModule
                     array(
                         'type' => 'text',
                         'label' => $this->l('Display Name'),
-                        'name' => 'COINTOPAY_DISPLAY_NAME',
+                        'name' => 'COINTOPAY_CC_DISPLAY_NAME',
                         'required' => true,
                     ),
                     array(
                         'type' => 'text',
                         'label' => $this->l('Merchant ID'),
-                        'name' => 'COINTOPAY_MERCHANT_ID',
+                        'name' => 'COINTOPAY_CC_MERCHANT_ID',
                         'desc' => $this->l('Your ID (created on Cointopay.com)'),
                         'required' => true,
                     ),
                     array(
                         'type' => 'text',
                         'label' => $this->l('Security Code'),
-                        'name' => 'COINTOPAY_SECURITY_CODE',
+                        'name' => 'COINTOPAY_CC_SECURITY_CODE',
                         'desc' => $this->l('Your Security Code (created on Cointopay.com)'),
                         'required' => true,
                     ),
                     array(
                         'type' => 'select',
                         'label' => $this->l('Select crypto currency'),
-                        'name' => 'COINTOPAY_CRYPTO_CURRENCY',
+                        'name' => 'COINTOPAY_CC_CRYPTO_CURRENCY',
                         'id' => 'crypto_currency',
-                        'default_value' => (int)Tools::getValue('COINTOPAY_CRYPTO_CURRENCY'),
+                        'default_value' => (int)Tools::getValue('COINTOPAY_CC_CRYPTO_CURRENCY'),
                         'required' => true,
                         'options' => array(
                             'query' => $options,
@@ -398,14 +398,14 @@ class Cointopay extends PaymentModule
 
     protected function getConfigFormValues()
     {
-        $system_name = Configuration::get('COINTOPAY_DISPLAY_NAME');
-        $dislay_name = (isset($system_name) && !empty($system_name)) ? $system_name : 'Cointopay International';
+        $system_name = Configuration::get('COINTOPAY_CC_DISPLAY_NAME');
+        $dislay_name = (isset($system_name) && !empty($system_name)) ? $system_name : 'Cointopay Fiat Payment';
 
         return array(
-            'COINTOPAY_DISPLAY_NAME' => $dislay_name,
-            'COINTOPAY_MERCHANT_ID' => Configuration::get('COINTOPAY_MERCHANT_ID'),
-            'COINTOPAY_SECURITY_CODE' => Configuration::get('COINTOPAY_SECURITY_CODE'),
-            'COINTOPAY_CRYPTO_CURRENCY' => Configuration::get('COINTOPAY_CRYPTO_CURRENCY'),
+            'COINTOPAY_CC_DISPLAY_NAME' => $dislay_name,
+            'COINTOPAY_CC_MERCHANT_ID' => Configuration::get('COINTOPAY_CC_MERCHANT_ID'),
+            'COINTOPAY_CC_SECURITY_CODE' => Configuration::get('COINTOPAY_CC_SECURITY_CODE'),
+            'COINTOPAY_CC_CRYPTO_CURRENCY' => Configuration::get('COINTOPAY_CC_CRYPTO_CURRENCY'),
         );
     }
 
@@ -417,7 +417,7 @@ class Cointopay extends PaymentModule
         $this->context->controller->addJS($this->_path . '/views/js/cointopay.js', 'all');
 
         $this->context->smarty->assign('form', $renderForm);
-        $this->context->smarty->assign("selected_currency", Configuration::get('COINTOPAY_CRYPTO_CURRENCY'));
+        $this->context->smarty->assign("selected_currency", Configuration::get('COINTOPAY_CC_CRYPTO_CURRENCY'));
         return $this->display(__FILE__, 'information.tpl');
     }
 
@@ -456,9 +456,8 @@ class Cointopay extends PaymentModule
         array_push($params, $_REQUEST);
         
         if (isset($_REQUEST['CustomerReferenceNr'])) {
-			$_REQUEST['QRCodeURL'] = $_REQUEST['QRCodeURL'];
 			$this->smarty->assign('getparams', $_REQUEST);
-            return $this->context->smarty->fetch('module:cointopay/views/templates/hook/ctp_success_callback.tpl');
+            return $this->context->smarty->fetch('module:cointopay_cc/views/templates/hook/ctp_success_callback.tpl');
         }
     }
 
@@ -476,7 +475,7 @@ class Cointopay extends PaymentModule
         $newOption->setCallToActionText($this->displayName)
 		->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
             ->setAdditionalInformation(
-                $this->context->smarty->fetch('module:cointopay/views/templates/hook/cointopay_intro.tpl')
+                $this->context->smarty->fetch('module:cointopay_cc/views/templates/hook/cointopay_intro.tpl')
             )
             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/order-page.png'));
 

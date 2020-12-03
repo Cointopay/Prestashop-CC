@@ -27,7 +27,7 @@
 require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
 require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
 
-class CointopayCallbackModuleFrontController extends ModuleFrontController
+class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
@@ -55,15 +55,15 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 
             $ctp_order_status = Tools::getValue('status');
 			$ctp_order_status_notenough = Tools::getValue('notenough');
-			$merchant_id = Configuration::get('COINTOPAY_MERCHANT_ID');
-			$security_code = Configuration::get('COINTOPAY_SECURITY_CODE');
-			$user_currency = Configuration::get('COINTOPAY_CRYPTO_CURRENCY');
+			$merchant_id = Configuration::get('COINTOPAY_CC_MERCHANT_ID');
+			$security_code = Configuration::get('COINTOPAY_CC_SECURITY_CODE');
+			$user_currency = Configuration::get('COINTOPAY_CC_CRYPTO_CURRENCY');
 			$selected_currency = (isset($user_currency) && !empty($user_currency)) ? $user_currency : 1;
 			$ctpConfig = array(
 			  'merchant_id' => $merchant_id,
 			  'security_code'=>$security_code,
 			  'selected_currency'=>$selected_currency,
-			  'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_PRESTASHOP_EXTENSION_VERSION
+			  'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
 			);
             sleep(5);
 			\Cointopay\Cointopay::config($ctpConfig);
@@ -78,7 +78,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => $response_ctp->data->Security.'Data mismatch! ConfirmCode doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -87,7 +87,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! CustomerReferenceNr doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -96,7 +96,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! TransactionID doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -105,16 +105,16 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! AltCoinID doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
 				}
-				elseif(null != Tools::getValue('COINTOPAY_MERCHANT_ID') && $response_ctp->data['MerchantID'] != Tools::getValue('COINTOPAY_MERCHANT_ID'))
+				elseif(null != Tools::getValue('COINTOPAY_CC_MERCHANT_ID') && $response_ctp->data['MerchantID'] != Tools::getValue('COINTOPAY_CC_MERCHANT_ID'))
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! MerchantID doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -123,7 +123,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! coinAddress doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -132,7 +132,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! SecurityCode doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -141,7 +141,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! inputCurrency doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
@@ -150,37 +150,37 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 				{
 				   $this->context->smarty->assign(array('text' => 'We have detected different order status. Your order status is '.$response_ctp->data['Status']));
 					if (_PS_VERSION_ >= '1.7') {
-						$this->setTemplate('module:cointopay/views/templates/front/cointopay_payment_cancel.tpl');
+						$this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');
 					} else {
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
 				}
 				else{
 					if ($ctp_order_status == 'paid' && $ctp_order_status_notenough == 0) {
-						$order_status = 'PS_OS_PAYMENT';
+						$order_status = 'COINTOPAY_CC_PAID';
 					} elseif ($ctp_order_status == 'paid' && $ctp_order_status_notenough == 1) {
-						$order_status = 'COINTOPAY_PNOTENOUGH';
+						$order_status = 'COINTOPAY_CC_PNOTENOUGH';
 						$this->logError('PS Orders is paid cointopay notenough', $order_id);
 					} elseif ($ctp_order_status == 'failed') {
-						$order_status = 'COINTOPAY_FAILED';
+						$order_status = 'COINTOPAY_CC_FAILED';
 						$this->logError('PS Orders is failed', $order_id);
 					} elseif ($ctp_order_status == 'underpaid') {
-						$order_status = 'COINTOPAY_PNOTENOUGH';
+						$order_status = 'COINTOPAY_CC_PNOTENOUGH';
 						$this->logError('PS Orders is paid cointopay notenough', $order_id);
 					} elseif ($ctp_order_status == 'expired') {
-						$order_status = 'COINTOPAY_EXPIRED';
+						$order_status = 'COINTOPAY_CC_EXPIRED';
 						$this->logError('PS Orders is expired', $order_id);
 					} elseif ($ctp_order_status == 'canceled') {
 						$order_status = 'PS_OS_CANCELED';
 					} elseif ($ctp_order_status == 'waiting') {
-						$order_status = 'COINTOPAY_WAITING';
+						$order_status = 'COINTOPAY_CC_WAITING';
 					} elseif ($ctp_order_status == 'refunded') {
 						$order_status = 'PS_OS_REFUND';
 					} else {
 						$order_status = false;
 					}
 
-					if ($order_status !== false && $order_status == 'PS_OS_PAYMENT') {
+					if ($order_status !== false && $order_status == 'COINTOPAY_CC_PAID') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
@@ -189,11 +189,11 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 						));
 						$this->context->smarty->assign(array('text' => 'Successfully Paid Order #'.$order_id));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_callback.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
 						} else {
 							$this->setTemplate('ctp_payment_callback.tpl');
 						}
-					} elseif ($order_status == 'COINTOPAY_PNOTENOUGH') {
+					} elseif ($order_status == 'COINTOPAY_CC_PNOTENOUGH') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
@@ -203,11 +203,11 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 
 						$this->context->smarty->assign(array('text' => 'Please pay remaining amount for Order #'.$order_id, 'RedirectURL' => Tools::getValue('RedirectURL')));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_paidnotenough.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_paidnotenough.tpl');
 						} else {
 							$this->setTemplate('ctp_payment_paidnotenough.tpl');
 						}
-					} elseif ($order_status == 'COINTOPAY_FAILED') {
+					} elseif ($order_status == 'COINTOPAY_CC_FAILED') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
@@ -217,11 +217,11 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 
 						$this->context->smarty->assign(array('text' => 'Payment failed for Order #'.$order_id));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_callback.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
 						} else {
 							$this->setTemplate('ctp_payment_callback.tpl');
 						}
-					} elseif ($order_status == 'COINTOPAY_EXPIRED') {
+					} elseif ($order_status == 'COINTOPAY_CC_EXPIRED') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
@@ -231,7 +231,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 
 						$this->context->smarty->assign(array('text' => 'Payment expired for Order #'.$order_id));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_callback.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
 						} else {
 							$this->setTemplate('ctp_payment_callback.tpl');
 						}
@@ -249,7 +249,7 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
 							'text' => 'Order Status ' . $ctp_order_status . ' not implemented'
 						));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_callback.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
 						} else {
 							$this->setTemplate('ctp_payment_callback.tpl');
 						}
@@ -265,14 +265,14 @@ class CointopayCallbackModuleFrontController extends ModuleFrontController
                 'text' => get_class($e) . ': ' . $e->getMessage()
             ));
 			if (_PS_VERSION_ >= '1.7') {
-				$this->setTemplate('module:cointopay/views/templates/front/ctp_payment_cancel.tpl');
+				$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
 			} else {
 				$this->setTemplate('ctp_payment_cancel.tpl');
 			}
         }
        /*
         if (_PS_VERSION_ >= '1.7') {
-            $this->setTemplate('module:cointopay/views/templates/front/ctp_payment_callback.tpl');
+            $this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
         } else {
             $this->setTemplate('ctp_payment_callback.tpl');
         }*/

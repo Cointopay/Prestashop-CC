@@ -33,7 +33,7 @@
 </style>
 {block name="content"}
   <section  style="padding:40px 0 60px 0;">
-  <h3>Cointopay Payment Status:</h3>
+  <h3>Cointopay Fiat Payment Status:</h3>
     {$text|escape:'htmlall':'UTF-8'} <a href="{$RedirectURL|escape:'htmlall':'UTF-8'}" target="_blank">Click here to pay.</a>
   </section>
 {/block}

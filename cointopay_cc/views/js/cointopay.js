@@ -25,10 +25,10 @@
 
 $(document).ready(function () {
 
-    var merchant_id = $("#COINTOPAY_MERCHANT_ID").val();
+    var merchant_id = $("#COINTOPAY_CC_MERCHANT_ID").val();
     getCoin(merchant_id);
 
-    $("#COINTOPAY_MERCHANT_ID").keyup(function () {
+    $("#COINTOPAY_CC_MERCHANT_ID").keyup(function () {
         var id = this.value;
         getCoin(id);
     });
@@ -37,7 +37,7 @@ $(document).ready(function () {
 function getCoin(id) {
 
     var selected_currency = $('#selected_currency').val();
-    var currency_url = '../modules/cointopay/ajaxcall.php';
+    var currency_url = '../modules/cointopay_cc/ajaxcall.php';
     if (id.length > 0) {
         $.ajax({
             url: currency_url,

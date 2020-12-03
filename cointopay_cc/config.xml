@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-    <name>cointopay</name>
-    <displayName><![CDATA[Cointopay International]]></displayName>
+    <name>cointopay_cc</name>
+    <displayName><![CDATA[Cointopay Fiat Payment]]></displayName>
     <version><![CDATA[1.0.0]]></version>
     <description><![CDATA[Accept Bitcoin and other cryptocurrencies as a payment method with Cointopay]]></description>
     <author><![CDATA[Cointopay.com]]></author>

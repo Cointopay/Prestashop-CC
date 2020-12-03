@@ -31,19 +31,19 @@
 <!-- Tab content -->
 <div id="Information" class="tabcontent">
 	<div class="wrapper">
-	  <img src="../modules/cointopay/views/img/invoice.png" style="float:right;"/>
-	  <h2 class="cointopay-information-header">Accept Bitcoin, Litecoin, Ethereum and other digital currencies on your PrestaShop store with Cointopay</h2><br/>
+	  <img src="../modules/cointopay_cc/views/img/invoice.png" style="float:right;"/>
+	  <h2 class="cointopay-cc-information-header">Accept Bitcoin, Litecoin, Ethereum and other digital currencies on your PrestaShop store with Cointopay</h2><br/>
 	  <strong> What is Cointopay? </strong> <br/>
 	  <p>We offer a fully automated cryptocurrency processing platform and invoice system. Accept any cryptocurrency and get paid in Euros or U.S. Dollars directly to your bank account (for verified merchants), or just keep bitcoins!</p><br/>
 	  <strong>Getting started</strong><br/>
 	  <p>
 	  	<ul>
-	  		<li>Install the Cointopay module on PrestaShop</li>
+	  		<li>Install the Cointopay Fiat payment module on PrestaShop</li>
 	  		<li>Visit <a href="https://cointopay.com" target="_blank">cointopay.com</a> and create an account</li>
 	  		<li>Get your API Key, Merchant ID and Security Code copy-paste them to the Configuration page in Cointopay module</li>
 	  	</ul>
 	  </p>
-	  <img src="../modules/cointopay/views/img/currencies.png" style="float:right;"/>
+	  <img src="../modules/cointopay_cc/views/img/currencies.png" style="float:right;"/>
 	  <p class="sign-up"><br/>
 	  	<a href="https://cointopay.com/Signup.jsp" class="sign-up-button">Sign up on Cointopay</a>
 	  </p><br/>

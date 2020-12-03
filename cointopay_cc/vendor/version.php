@@ -1,0 +1,3 @@
+<?php
+
+define('COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION', '1.0');

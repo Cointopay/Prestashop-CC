@@ -1,7 +1,7 @@
 <?php
 namespace cointopay;
 
-class Cointopay
+class Cointopay_Cc
 {
     const VERSION = '1.0';
     const USER_AGENT_ORIGIN = 'Cointopay PHP Library';
