@@ -24,8 +24,8 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/cointopay/init.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/version.php');
 
 class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 {
@@ -66,7 +66,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 			  'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
 			);
             sleep(5);
-			\Cointopay\Cointopay::config($ctpConfig);
+			\Cointopay\Cointopay_Cc::config($ctpConfig);
 			$response_ctp = \Cointopay\Merchant\Order::ValidateOrder(array(
 				'TransactionID'         => $TransactionID,
 				'ConfirmCode'            => $ConfirmCode
@@ -74,7 +74,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 			
            // print_r($response_ctp->data);die;
             if (isset($response_ctp)) {
-				if($response_ctp->data['Security'] != $ConfirmCode)
+				if(null != $response_ctp->data['Security'] && $response_ctp->data['Security'] != $ConfirmCode)
 				{
 				   $this->context->smarty->assign(array('text' => $response_ctp->data->Security.'Data mismatch! ConfirmCode doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
@@ -83,7 +83,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
 				}
-				elseif($response_ctp->data['CustomerReferenceNr'] != $order_id)
+				elseif(null != $response_ctp->data['CustomerReferenceNr'] && $response_ctp->data['CustomerReferenceNr'] != $order_id)
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! CustomerReferenceNr doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
@@ -92,7 +92,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 						$this->setTemplate('cointopay_payment_cancel.tpl');
 					}
 				}
-				elseif($response_ctp->data['TransactionID'] != $TransactionID)
+				elseif(null != $response_ctp->data['TransactionID'] && $response_ctp->data['TransactionID'] != $TransactionID)
 				{
 				   $this->context->smarty->assign(array('text' => 'Data mismatch! TransactionID doesn\'t match'));
 					if (_PS_VERSION_ >= '1.7') {
@@ -217,9 +217,9 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 
 						$this->context->smarty->assign(array('text' => 'Payment failed for Order #'.$order_id));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
 						} else {
-							$this->setTemplate('ctp_payment_callback.tpl');
+							$this->setTemplate('ctp_payment_cancel.tpl');
 						}
 					} elseif ($order_status == 'COINTOPAY_CC_EXPIRED') {
 						$history = new OrderHistory();
@@ -243,7 +243,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 							'order_name' => Tools::getValue('CustomerReferenceNr'),
 						));
 
-						Tools::redirect($this->context->link->getModuleLink('cointopay', 'cancel'));
+						Tools::redirect($this->context->link->getModuleLink('cointopay_cc', 'cancel'));
 					} else {
 						$this->context->smarty->assign(array(
 							'text' => 'Order Status ' . $ctp_order_status . ' not implemented'
@@ -258,7 +258,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 				}
 			}
 			else {
-				Tools::redirect('index.php?controller=order&step=3');
+				Tools::redirect($this->context->link->getPageLink('index',true).'order?step=3');
 			}
         } catch (Exception $e) {
             $this->context->smarty->assign(array(

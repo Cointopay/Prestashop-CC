@@ -24,8 +24,8 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/cointopay/init.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/version.php');
 
 class Cointopay_CcCancelModuleFrontController extends ModuleFrontController
 {
@@ -67,7 +67,7 @@ class Cointopay_CcCancelModuleFrontController extends ModuleFrontController
 			  'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
 			);
 
-			\Cointopay\Cointopay::config($ctpConfig);
+			\Cointopay\Cointopay_Cc::config($ctpConfig);
 			$response_ctp = \Cointopay\Merchant\Order::ValidateOrder(array(
 				'TransactionID'         => $TransactionID,
 				'ConfirmCode'            => $ConfirmCode
@@ -180,20 +180,20 @@ class Cointopay_CcCancelModuleFrontController extends ModuleFrontController
 						$order_status = false;
 					}
 
-					if ($order_status !== false && $order_status == 'PS_OS_PAYMENT') {
+					if ($order_status !== false && $order_status == 'COINTOPAY_CC_PAID') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
 						$history->addWithemail(true, array(
 							'order_name' => Tools::getValue('CustomerReferenceNr'),
 						));
-						$this->context->smarty->assign(array('text' => $order_id));
+						$this->context->smarty->assign(array('text' => 'Successfully Paid Order #'.$order_id));
 						if (_PS_VERSION_ >= '1.7') {
-							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_callback.tpl');
 						} else {
-							$this->setTemplate('ctp_payment_cancel.tpl');
+							$this->setTemplate('ctp_payment_callback.tpl');
 						}
-					} elseif ($order_status == 'COINTOPAY_CC_PNOTENOUGH' || $order_status == 'PS_OS_REFUND') {
+					} elseif ($order_status == 'COINTOPAY_CC_PNOTENOUGH') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
@@ -201,21 +201,68 @@ class Cointopay_CcCancelModuleFrontController extends ModuleFrontController
 							'order_name' => Tools::getValue('CustomerReferenceNr'),
 						));
 
-						Tools::redirect($this->context->link->getModuleLink('cointopay', 'cancel'));
+						$this->context->smarty->assign(array('text' => 'Please pay remaining amount for Order #'.$order_id, 'RedirectURL' => Tools::getValue('RedirectURL')));
+						if (_PS_VERSION_ >= '1.7') {
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_paidnotenough.tpl');
+						} else {
+							$this->setTemplate('ctp_payment_paidnotenough.tpl');
+						}
+					} elseif ($order_status == 'COINTOPAY_CC_FAILED') {
+						$history = new OrderHistory();
+						$history->id_order = $order->id;
+						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
+						$history->addWithemail(true, array(
+							'order_name' => Tools::getValue('CustomerReferenceNr'),
+						));
+
+						$this->context->smarty->assign(array('text' => 'Payment failed for Order #'.$order_id));
+						if (_PS_VERSION_ >= '1.7') {
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
+						} else {
+							$this->setTemplate('ctp_payment_cancel.tpl');
+						}
+					} elseif ($order_status == 'COINTOPAY_CC_EXPIRED') {
+						$history = new OrderHistory();
+						$history->id_order = $order->id;
+						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
+						$history->addWithemail(true, array(
+							'order_name' => Tools::getValue('CustomerReferenceNr'),
+						));
+
+						$this->context->smarty->assign(array('text' => 'Payment expired for Order #'.$order_id));
+						if (_PS_VERSION_ >= '1.7') {
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
+						} else {
+							$this->setTemplate('ctp_payment_cancel.tpl');
+						}
+					} elseif ($order_status == 'PS_OS_REFUND') {
+						$history = new OrderHistory();
+						$history->id_order = $order->id;
+						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
+						$history->addWithemail(true, array(
+							'order_name' => Tools::getValue('CustomerReferenceNr'),
+						));
+
+						Tools::redirect($this->context->link->getModuleLink('cointopay_cc', 'cancel'));
 					} else {
 						$this->context->smarty->assign(array(
 							'text' => 'Order Status ' . $ctp_order_status . ' not implemented'
 						));
+						if (_PS_VERSION_ >= '1.7') {
+							$this->setTemplate('module:cointopay_cc/views/templates/front/ctp_payment_cancel.tpl');
+						} else {
+							$this->setTemplate('ctp_payment_cancel.tpl');
+						}
 					}
 					
 				}
 			}
 			else {
-				Tools::redirect('index.php?controller=order&step=3');
+				Tools::redirect($this->context->link->getPageLink('index',true).'order?step=3');
 			}
         } catch (Exception $e) {
             $this->context->smarty->assign(array(
-                'text' => get_class($e) . ': ' . $e->getMessage()
+                'text' => "something wrong! ".$e->getMessage()
             ));
 			if (_PS_VERSION_ >= '1.7') {
             $this->setTemplate('module:cointopay_cc/views/templates/front/cointopay_payment_cancel.tpl');

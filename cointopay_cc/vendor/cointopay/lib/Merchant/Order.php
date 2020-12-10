@@ -1,7 +1,7 @@
 <?php
 namespace cointopay\Merchant;
 
-use cointopay\Cointopay;
+use cointopay\Cointopay_Cc;
 use cointopay\Merchant;
 
 class Order extends Merchant
@@ -15,12 +15,12 @@ class Order extends Merchant
 
     public static function createOrFail($params, $options = array(), $authentication = array())
     {
-        $order = Cointopay::request('orders', 'GET', $params, $authentication);
+        $order = Cointopay_Cc::request('orders', 'GET', $params, $authentication);
         return new self($order);
     }
 	public static function ValidateOrder($params, $options = array(), $authentication = array())
     {
-        $order = Cointopay::request('validation', 'GET', $params, $authentication);
+        $order = Cointopay_Cc::request('validation', 'GET', $params, $authentication);
         return new self($order);
     }
 

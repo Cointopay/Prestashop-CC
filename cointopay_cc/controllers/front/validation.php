@@ -28,8 +28,8 @@
  * @since 1.5.0
  */
  
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/cointopay/init.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/version.php');
 
 class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
 {
@@ -40,7 +40,7 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
     {
         $cart = $this->context->cart;
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0 || !$this->module->active) {
-            Tools::redirect('index.php?controller=order&step=1');
+            Tools::redirect($this->context->link->getPageLink('index',true).'order?step=1');
         }
 
         // Check that this payment option is still available in case the customer changed his address just before the end of the checkout process
@@ -59,10 +59,11 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
 
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer))
-            Tools::redirect('index.php?controller=order&step=1');
+            Tools::redirect($this->context->link->getPageLink('index',true).'order?step=1');
 
         $currency = $this->context->currency;
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
+
     
         $this->module->validateOrder($cart->id, Configuration::get('COINTOPAY_CC_PENDING'), $total, $this->module->displayName, NULL, array(), (int)$currency->id, false, $customer->secure_key);
 		$link = new Link();
@@ -87,13 +88,13 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
           'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
         );
 
-        \Cointopay\Cointopay::config($ctpConfig);
+        \Cointopay\Cointopay_Cc::config($ctpConfig);
         $order = \Cointopay\Merchant\Order::createOrFail(array(
             'order_id'         => $this->module->currentOrder,
             'price'            => $total,
             'currency'         => $this->currencyCode($currency->iso_code),
-            'cancel_url'       => $this->flashEncode($this->context->link->getModuleLink('cointopay', 'cancel')),
-            'callback_url'     => $this->flashEncode($this->context->link->getModuleLink('cointopay', 'callback')),
+            'cancel_url'       => $this->flashEncode($this->context->link->getModuleLink('cointopay_cc', 'cancel')),
+            'callback_url'     => $this->flashEncode($this->context->link->getModuleLink('cointopay_cc', 'callback')),
             'success_url'      => $success_url,
             'title'            => Configuration::get('PS_SHOP_NAME') . ' Order #' . $cart->id,
             'description'      => join($description, ', '),
@@ -101,10 +102,26 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
         ));
          
         if (isset($order)) {
-        Tools::redirect('index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key.'&PaymentDetail='.$order->PaymentDetail.'&TransactionID='.$order->TransactionID.'&CoinName='.$order->CoinName.'&RedirectURL='.$order->shortURL.'&merchant_id='.$merchant_id.'&ExpiryTime='.$order->ExpiryTime.'&Amount='.$order->Amount.'&CustomerReferenceNr='.$order->CustomerReferenceNr.'&coinAddress='.$order->coinAddress.'&ConfirmCode='.$order->Security.'&AltCoinID='.$order->AltCoinID.'&SecurityCode='.$order->SecurityCode.'&inputCurrency='.$order->inputCurrency);
+		$PaymentDetail = $order->PaymentDetail;
+			$orderObject = new Order($order->CustomerReferenceNr);
+			if($orderObject->getCurrentOrderState()->name[1] == 'instant bank transfer pending'){
+				$history = new OrderHistory();
+				$history->id_order = $order->CustomerReferenceNr;
+				$history->changeIdOrderState((int)Configuration::get('COINTOPAY_CC_PROCESSING_IN_PROGRESS'), $orderObject->id);
+				$history->addWithemail(true, array(
+					'{id_order}' => $order->CustomerReferenceNr,
+					'{order_name}' => $order->TransactionID,
+					'{payment}' => Tools::substr($orderObject->payment, 0, 32),
+					'{bankwire_owner}' => '',
+					'{bankwire_details}' => "Reference: ".$order->TransactionID."<br> PaymentDetail: ".$order->PaymentDetail,
+					'{bankwire_address}' => '',
+				));
+			}
+		
+        Tools::redirect($this->context->link->getPageLink('index',true).'order-confirmation?id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key.'&PaymentDetail='.$PaymentDetail.'&TransactionID='.$order->TransactionID.'&CoinName='.$order->CoinName.'&RedirectURL='.$order->shortURL.'&merchant_id='.$merchant_id.'&ExpiryTime='.$order->ExpiryTime.'&Amount='.$order->Amount.'&CustomerReferenceNr='.$order->CustomerReferenceNr.'&coinAddress='.$order->coinAddress.'&ConfirmCode='.$order->Security.'&AltCoinID='.$order->AltCoinID.'&SecurityCode='.$order->SecurityCode.'&inputCurrency='.$order->inputCurrency);
 		}
 		else {
-            Tools::redirect('index.php?controller=order&step=3');
+            Tools::redirect($this->context->link->getPageLink('index',true).'order?step=3');
         }
     }
 	/**

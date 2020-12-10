@@ -29,8 +29,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once _PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php';
-require_once _PS_MODULE_DIR_ . '/cointopay/vendor/version.php';
+require_once _PS_MODULE_DIR_ . '/cointopay_cc/vendor/cointopay/init.php';
+require_once _PS_MODULE_DIR_ . '/cointopay_cc/vendor/version.php';
 
 class Cointopay_Cc extends PaymentModule
 {
@@ -96,7 +96,7 @@ class Cointopay_Cc extends PaymentModule
         }
 
         $order_ctp_pending = new OrderState();
-        $order_ctp_pending->name = array_fill(0, 10, 'instant bank transfer');
+        $order_ctp_pending->name = array_fill(0, 10, 'instant bank transfer pending');
         $order_ctp_pending->send_email = 0;
         $order_ctp_pending->invoice = 0;
         $order_ctp_pending->color = 'RoyalBlue';
@@ -105,19 +105,21 @@ class Cointopay_Cc extends PaymentModule
 		
 		$order_ctp_paid = new OrderState();
         $order_ctp_paid->name = array_fill(0, 10, 'instant payment accepted');
-        $order_ctp_paid->send_email = 0;
+        $order_ctp_paid->send_email = 1;
         $order_ctp_paid->invoice = 0;
         $order_ctp_paid->color = 'RoyalBlue';
         $order_ctp_paid->unremovable = false;
-        $order_ctp_paid->logable = 0;
+        $order_ctp_paid->logable = 1;
+		$order_ctp_paid->template = 'payment';
 		
 		$order_processing = new OrderState();
-        $order_processing->name = array_fill(0, 10, 'Cointopay Fiat payment processing in progress');
-        $order_processing->send_email = 0;
+        $order_processing->name = array_fill(0, 10, 'instant bank transfer');
+        $order_processing->send_email = 1;
         $order_processing->invoice = 0;
         $order_processing->color = 'RoyalBlue';
         $order_processing->unremovable = false;
-        $order_processing->logable = 0;
+        $order_processing->logable = 1;
+		$order_processing->template = 'bankwire';
 
         $order_failed = new OrderState();
         $order_failed->name = array_fill(0, 10, 'Cointopay Fiat payment payment failed');
@@ -294,9 +296,9 @@ class Cointopay_Cc extends PaymentModule
                         . ' Extension v' . COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION,
                 );
 
-                \Cointopay\Cointopay::config($ctpConfig);
+                \Cointopay\Cointopay_Cc::config($ctpConfig);
 
-                $merchant = \Cointopay\Cointopay::verifyMerchant();
+                $merchant = \Cointopay\Cointopay_Cc::verifyMerchant();
 
                 if ($merchant !== true) {
                     $this->postErrors[] = $this->l($merchant);
@@ -482,6 +484,22 @@ class Cointopay_Cc extends PaymentModule
         $paymentOptions = array($newOption);
 
         return $paymentOptions;
+    }
+	
+	/**
+     * @param array $hookParams
+     */
+    public function hookActionBuildMailLayoutVariables(array $hookParams)
+    {
+        if (!isset($hookParams['mailLayout'])) {
+            return;
+        }
+
+        /** @var LayoutInterface $mailLayout */
+        $mailLayout = $hookParams['mailLayout'];
+        if ($mailLayout->getModuleName() != $this->name || $mailLayout->getName() != 'customizable_modern_layout') {
+            return;
+        }
     }
 
 	

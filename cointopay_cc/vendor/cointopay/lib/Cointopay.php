@@ -56,7 +56,7 @@ class Cointopay_Cc
         if (empty($merchant_id) || empty($security_code))
             \cointopay\Exception::throwException(400, array('reason' => 'CredentialsMissing'));
 
-        if (isset($params) && !empty($params)) {
+        if (isset($params) && !empty($params) && $url != 'validation') {
             $amount = $params['price'];
             $order_id = $params['order_id'];
             $currency = $params['currency'];

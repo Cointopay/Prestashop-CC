@@ -26,7 +26,7 @@
 <section id="cointopay_order_confirmation_section">
     <h3 class="h3 card-title">Cointopay Payment details:</h3>
     <div class="cointopay-cc-login-content">
- <p>To pay with Cointopay <a class="inline_popup_cointopay" href="#" rel="nofollow">Click here</a></p>
+ <p>{$smarty.get.PaymentDetail nofilter}</p>
            
                <div id="cointopay-cc-modal-6-0" class="modal fade cointopay_popup in" tabindex="-1" role="dialog" style="display: block;">
   <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1150px;">
@@ -45,16 +45,16 @@
         <table class="form">
                         <tbody>
                             <tr style="height: 50px;">
-                                <td style="width: 200px;">Checkout# </td>
-                                <td>{$smarty.get.CustomerReferenceNr|escape:'htmlall':'UTF-8'}</td>
+                                <td style="width: 200px;">REFERENCE:  </td>
+                                <td>{$smarty.get.TransactionID|escape:'htmlall':'UTF-8'}</td>
                             </tr>
                         </tbody>
                     </table>
                     <table class="form">
                         <tbody>
                             <tr style="height: 50px;">
-                                <td style="width: 200px;">PaymentDetail </td>
-                                <td>{$smarty.get.PaymentDetail|escape:'htmlall':'UTF-8'}</td>
+                                <td style="width: 200px;vertical-align:top;padding-top:26px;">PaymentDetail </td>
+                                <td>{$smarty.get.PaymentDetail nofilter}</td>
                             </tr>
                         </tbody>
                     </table>

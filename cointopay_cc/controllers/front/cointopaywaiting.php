@@ -24,8 +24,8 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/cointopay/init.php');
-require_once(_PS_MODULE_DIR_ . '/cointopay/vendor/version.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/cointopay/init.php');
+require_once(_PS_MODULE_DIR_ . '/cointopay_cc/vendor/version.php');
 
 class Cointopay_CcCointopaywaitingModuleFrontController extends ModuleFrontController
 {
@@ -50,17 +50,6 @@ class Cointopay_CcCointopaywaitingModuleFrontController extends ModuleFrontContr
 				curl_close($ch);
 				$decoded = json_decode($output);
 				$status_res = json_decode($output, true);
-				if($status_res[1] == 'waiting'){
-					$order = new Order($orderID);
-					if($order->getCurrentOrderState()->name[1] == 'Waiting for cointopay transaction'){
-						$history = new OrderHistory();
-						$history->id_order = $orderID;
-						$history->changeIdOrderState((int)Configuration::get('COINTOPAY_CC_WAITING'), $orderID);
-						$history->addWithemail(true, array(
-							'order_name' => $orderID,
-						));
-					}
-				}
 				print_r($output);die;
 			}
         } catch (Exception $e) {

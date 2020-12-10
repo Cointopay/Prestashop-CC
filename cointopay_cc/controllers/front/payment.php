@@ -36,7 +36,7 @@ class Cointopay_CcPaymentModuleFrontController extends ModuleFrontController
         $cart = $this->context->cart;
 
         if (!$this->module->checkCurrency($cart)) {
-            Tools::redirect('index.php?controller=order');
+            Tools::redirect($this->context->link->getPageLink('index',true).'order');
         }
 
         $this->context->smarty->assign(array(
