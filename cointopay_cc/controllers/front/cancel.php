@@ -67,8 +67,8 @@ class Cointopay_CcCancelModuleFrontController extends ModuleFrontController
 			  'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
 			);
 
-			\Cointopay\Cointopay_Cc::config($ctpConfig);
-			$response_ctp = \Cointopay\Merchant\Order::ValidateOrder(array(
+			\Cointopay_Cc\Cointopay_Cc::config($ctpConfig);
+			$response_ctp = \Cointopay_Cc\Merchant\Order::ValidateOrder(array(
 				'TransactionID'         => $TransactionID,
 				'ConfirmCode'            => $ConfirmCode
 			));

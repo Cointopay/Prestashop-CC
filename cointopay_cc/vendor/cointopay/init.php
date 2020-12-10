@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__) . '/lib/Cointopay.php');
+require(dirname(__FILE__) . '/lib/Cointopay_Cc.php');
 
 // Exception Class
 require(dirname(__FILE__) . '/lib/ApiError.php');

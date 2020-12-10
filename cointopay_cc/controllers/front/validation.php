@@ -88,8 +88,8 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
           'user_agent' => 'Cointopay - Prestashop v'._PS_VERSION_.' Extension v'.COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION
         );
 
-        \Cointopay\Cointopay_Cc::config($ctpConfig);
-        $order = \Cointopay\Merchant\Order::createOrFail(array(
+        \Cointopay_Cc\Cointopay_Cc::config($ctpConfig);
+        $order = \Cointopay_Cc\Merchant\Order::createOrFail(array(
             'order_id'         => $this->module->currentOrder,
             'price'            => $total,
             'currency'         => $this->currencyCode($currency->iso_code),

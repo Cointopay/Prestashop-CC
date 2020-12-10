@@ -296,9 +296,9 @@ class Cointopay_Cc extends PaymentModule
                         . ' Extension v' . COINTOPAY_CC_PRESTASHOP_EXTENSION_VERSION,
                 );
 
-                \Cointopay\Cointopay_Cc::config($ctpConfig);
+                \Cointopay_Cc\Cointopay_Cc::config($ctpConfig);
 
-                $merchant = \Cointopay\Cointopay_Cc::verifyMerchant();
+                $merchant = \Cointopay_Cc\Cointopay_Cc::verifyMerchant();
 
                 if ($merchant !== true) {
                     $this->postErrors[] = $this->l($merchant);

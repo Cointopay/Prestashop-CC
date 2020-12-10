@@ -1,5 +1,5 @@
 <?php
-namespace cointopay;
+namespace cointopay_cc;
 
 class Cointopay_Cc
 {
@@ -54,7 +54,7 @@ class Cointopay_Cc
 
         # Check if credentials was passed
         if (empty($merchant_id) || empty($security_code))
-            \cointopay\Exception::throwException(400, array('reason' => 'CredentialsMissing'));
+            \cointopay_cc\Exception::throwException(400, array('reason' => 'CredentialsMissing'));
 
         if (isset($params) && !empty($params) && $url != 'validation') {
             $amount = $params['price'];

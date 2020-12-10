@@ -1,5 +1,5 @@
 <?php
-namespace cointopay;
+namespace cointopay_cc;
 
 class APIError extends \Exception {}
 

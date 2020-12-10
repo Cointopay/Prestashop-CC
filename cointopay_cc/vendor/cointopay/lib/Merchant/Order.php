@@ -1,8 +1,8 @@
 <?php
-namespace cointopay\Merchant;
+namespace cointopay_cc\Merchant;
 
-use cointopay\Cointopay_Cc;
-use cointopay\Merchant;
+use cointopay_cc\Cointopay_Cc;
+use cointopay_cc\Merchant;
 
 class Order extends Merchant
 {
