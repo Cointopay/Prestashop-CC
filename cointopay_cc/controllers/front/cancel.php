@@ -180,7 +180,7 @@ class Cointopay_CcCancelModuleFrontController extends ModuleFrontController
 						$order_status = false;
 					}
 
-					if ($order_status !== false && $order_status == 'COINTOPAY_CC_PAID') {
+					if ($order_status !== false && $order_status == 'PS_OS_PAYMENT') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);

@@ -157,7 +157,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 				}
 				else{
 					if ($ctp_order_status == 'paid' && $ctp_order_status_notenough == 0) {
-						$order_status = 'COINTOPAY_CC_PAID';
+						$order_status = 'PS_OS_PAYMENT';
 					} elseif ($ctp_order_status == 'paid' && $ctp_order_status_notenough == 1) {
 						$order_status = 'COINTOPAY_CC_PNOTENOUGH';
 						$this->logError('PS Orders is paid cointopay notenough', $order_id);
@@ -180,7 +180,7 @@ class Cointopay_CcCallbackModuleFrontController extends ModuleFrontController
 						$order_status = false;
 					}
 
-					if ($order_status !== false && $order_status == 'COINTOPAY_CC_PAID') {
+					if ($order_status !== false && $order_status == 'PS_OS_PAYMENT') {
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
 						$history->changeIdOrderState((int)Configuration::get($order_status), $order->id);
