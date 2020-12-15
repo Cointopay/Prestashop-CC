@@ -102,7 +102,26 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
         ));
          
         if (isset($order)) {
-		$PaymentDetail = $order->PaymentDetail;
+		$confirmation_url = $link->getPageLink('order-confirmation', null, null, array(
+          'id_cart'     => $cart->id,
+          'id_module'   => $this->module->id,
+          'key'         => $customer->secure_key,
+		  'id_order' => $this->module->currentOrder,
+		  'PaymentDetail' => $order->PaymentDetail,
+		  'TransactionID' => $order->TransactionID,
+		  'CoinName' => $order->CoinName,
+		  'RedirectURL' => $order->shortURL,
+		  'merchant_id' => $merchant_id,
+		  'ExpiryTime' => $order->ExpiryTime,
+		  'Amount' => $order->Amount,
+		  'CustomerReferenceNr' => $order->CustomerReferenceNr,
+		  'coinAddress' => $order->coinAddress,
+		  'ConfirmCode' => $order->Security,
+		  'AltCoinID' => $order->AltCoinID,
+		  'SecurityCode' => $order->SecurityCode,
+		  'inputCurrency' => $order->inputCurrency
+        ));
+		
 			$orderObject = new Order($order->CustomerReferenceNr);
 			if($orderObject->getCurrentOrderState()->name[1] == 'instant bank transfer pending'){
 				$history = new OrderHistory();
@@ -118,7 +137,7 @@ class Cointopay_CcValidationModuleFrontController extends ModuleFrontController
 				));
 			}
 		
-        Tools::redirect($this->context->link->getPageLink('index',true).'order-confirmation?id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key.'&PaymentDetail='.$PaymentDetail.'&TransactionID='.$order->TransactionID.'&CoinName='.$order->CoinName.'&RedirectURL='.$order->shortURL.'&merchant_id='.$merchant_id.'&ExpiryTime='.$order->ExpiryTime.'&Amount='.$order->Amount.'&CustomerReferenceNr='.$order->CustomerReferenceNr.'&coinAddress='.$order->coinAddress.'&ConfirmCode='.$order->Security.'&AltCoinID='.$order->AltCoinID.'&SecurityCode='.$order->SecurityCode.'&inputCurrency='.$order->inputCurrency);
+        Tools::redirect($confirmation_url);
 		}
 		else {
             Tools::redirect($this->context->link->getPageLink('index',true).'order?step=3');
